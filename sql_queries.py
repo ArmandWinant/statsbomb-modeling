@@ -1,59 +1,42 @@
 # DROP TABLES
 
-matches_table_drop = "DROP TABLE IF EXISTS matches;"
 events_table_drop = "DROP TABLE IF EXISTS events;"
-teams_table_drop = "DROP TABLE IF EXISTS teams;"
+matches_table_drop = "DROP TABLE IF EXISTS matches;"
 players_table_drop = "DROP TABLE IF EXISTS players;"
-play_patterns_table_drop = "DROP TABLE IF EXISTS play_patterns;"
+teams_table_drop = "DROP TABLE IF EXISTS teams;"
+competitions_table_drop = "DROP TABLE IF EXISTS competitions;"
+related_events_table_drop = "DROP TABLE IF EXISTS related_events;"
 
 # CREATE TABLES
-competitions_table_create = ("""
-    CREATE TABLE IF NOT EXISTS competitions (
+
+events_table_create = ("""
+    CREATE TABLE IF NOT EXISTS events (
         id SMALLINT PRIMARY KEY,
-        
+        index SMALLINT NOT NULL,
+        type VARCHAR NOT NULL,
+        event_time TIMESTAMP NOT NULL,
+        period SMALLINT NOT NULL,
+        location_x FLOAT,
+        location_y FLOAT,
+        position VARCHAR,
+        possession_team SMALLINT,
+        possession SMALLINT,
+        match SMALLINT NOT NULL,
+        player SMALLINT,
+        duration FLOAT
     );
 """)
 
 matches_table_create = ("""
     CREATE TABLE IF NOT EXISTS matches (
-        id INT PRIMARY KEY,
-        date DATE,
-        competition_id SMALLINT,
-        season SMALLINT,
-        home_team_id SMALLINT,
-        away_team_id SMALLINT,
-        home_goals SMALLINT,
-        away_goals SMALLINT,
-        last_updated TIMESTAMP
-    );
-""")
-
-events_table_create = ("""
-    CREATE TABLE IF NOT EXISTS events (
-        id VARCHAR PRIMARY KEY,
-        match_id INT,
-        index SMALLINT,
-        period SMALLINT,
-        minute SMALLINT,
-        seconds REAL,
-        type VARCHAR,
-        pattern_id SMALLINT,
-        team_id SMALLINT,
-        possession SMALLINT,
-        player_id SMALLINT,
-        possession_team_id SMALLINT,
-        duration REAL,
-        position VARCHAR,
-        location_x REAL
-        location_y REAL
-    );
-""")
-
-teams_table_create = ("""
-    CREATE TABLE IF NOT EXISTS teams (
         id SMALLINT PRIMARY KEY,
-        name VARCHAR,
-        team_gender CHAR(1)
+        stadium SMALLINT,
+        match_date DATE,
+        competition SMALLINT,
+        home_team SMALLINT,
+        away_team SMALLINT,
+        home_score SMALLINT,
+        away_score SMALLINT
     );
 """)
 
@@ -61,9 +44,33 @@ players_table_create = ("""
     CREATE TABLE IF NOT EXISTS players (
         id SMALLINT PRIMARY KEY,
         name VARCHAR,
-        team_id SMALLINT,
         position VARCHAR,
-        jersey_number SMALLINT
+        team SMALLINT
+    );
+""");
+
+teams_table_create = ("""
+    CREATE TABLE IF NOT EXISTS teams (
+        id SMALLINT PRIMARY KEY,
+        name VARCHAR,
+        gender CHAR(1),
+        country VARCHAR
+    );
+""")
+
+competitions_table_create = ("""
+    CREATE TABLE IF NOT EXISTS competitions (
+        id SMALLINT PRIMARY KEY,
+        name VARCHAR,
+        season CHAR(7)
+    );
+""")
+
+related_events_table_create = ("""
+    CREATE TABLE IF NOT EXISTS related_events (
+        event_x SMALLINT,
+        event_y SMALLINT,
+        PRIMARY KEY(event_x, event_y);
     );
 """)
 
@@ -73,12 +80,33 @@ events_table_insert = ("""
     INSERT INTO events (
         id,
         index,
-        time,
         type,
-        pattern_id,
-        team_id,
+        event_time,
+        period,
+        location_x,
+        location_y,
+        position,
+        possession_team,
         possession,
-        posession_team_id
+        match,
+        player,
+        duration) 
+    )
+    VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+    ON CONFLICT (id)
+    DO NOTHING;
+""")
+
+matches_table_insert = ("""
+    INSERT INTO (
+        id,
+        stadium,
+        match_date
+        competition,
+        home_team,
+        away_team,
+        home_score,
+        away_score
     )
     VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
     ON CONFLICT (id)
@@ -86,21 +114,52 @@ events_table_insert = ("""
 """)
 
 players_table_insert = ("""
-    INSERT INTO players (
+    INSERT INTO matches (
+        id,
+        stadium,
+        match_date,
+        competition,
+        home_team,
+        away_team,
+        home_score,
+        away_score
+    )
+    VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+    ON CONFLICT(id)
+    DO NOTHING;
+""")
+
+teams_table_insert = ("""
+    INSERT INTO teams (
         id,
         name,
-        team_id,
-        position,
-        jersey_number
+        gender,
+        country
     )
-    VALUES (%s, %s, %s, %s, %s)
+    VALUES (%s, %s, %s, %s)
     ON CONFLICT (id)
     DO UPDATE
     SET
-        name = EXCLUDED.name,
-        team_id = EXCLUDED.team_id,
-        position = EXCLUDED.position,
-        jersey_number = EXCLUDED.jersey_number;
+        name = EXCLUCED.name;
+""")
+
+competitions_table_insert = ("""
+    INSERT INTO competitions (
+        id,
+        name,
+        season
+    )
+    VALUES (%s, %s, %s)
+    ON CONFLICT (id)
+    DO NOTHING;
+""")
+
+related_events_table_insert = ("""
+    INSERT INTO related_events (
+        event_x,
+        event_y
+    )
+    VALUES (%s, %s);
 """)
 
 # FIND SONGS

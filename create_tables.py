@@ -46,9 +46,9 @@ def create_tables(cur, conn):
 
 def main():
     """
-    - Drops (if exists) and Creates the sparkify database. 
+    - Drops (if exists) and Creates the statsbomb database. 
     
-    - Establishes connection with the sparkify database and gets
+    - Establishes connection with the statsbomb database and gets
     cursor to it.  
     
     - Drops all the tables.  
