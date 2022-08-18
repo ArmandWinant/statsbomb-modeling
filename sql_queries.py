@@ -11,18 +11,19 @@ related_events_table_drop = "DROP TABLE IF EXISTS related_events;"
 
 events_table_create = ("""
     CREATE TABLE IF NOT EXISTS events (
-        id SMALLINT PRIMARY KEY,
+        id VARCHAR PRIMARY KEY,
         index SMALLINT NOT NULL,
         type VARCHAR NOT NULL,
-        event_time TIMESTAMP NOT NULL,
+        pattern VARCHAR NOT NULL,
+        event_time TIME NOT NULL,
         period SMALLINT NOT NULL,
         location_x FLOAT,
         location_y FLOAT,
-        position VARCHAR,
-        possession_team SMALLINT,
-        possession SMALLINT,
+        possession_team SMALLINT NOT NULL,
+        possession SMALLINT NOT NULL,
         match SMALLINT NOT NULL,
         player SMALLINT,
+        team SMALLINT,
         duration FLOAT
     );
 """)
@@ -81,18 +82,19 @@ events_table_insert = ("""
         id,
         index,
         type,
+        pattern,
         event_time,
         period,
         location_x,
         location_y,
-        position,
         possession_team,
         possession,
         match,
         player,
-        duration) 
+        team,
+        duration
     )
-    VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+    VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
     ON CONFLICT (id)
     DO NOTHING;
 """)
