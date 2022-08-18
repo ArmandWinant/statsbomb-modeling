@@ -169,5 +169,7 @@ song_select = ("""
 
 # QUERY LISTS
 
-create_table_queries = [songplay_table_create, user_table_create, song_table_create, artist_table_create, time_table_create]
-drop_table_queries = [songplay_table_drop, user_table_drop, song_table_drop, artist_table_drop, time_table_drop]
+create_table_queries = [events_table_create, matches_table_create, players_table_create, teams_table_create,
+                        competitions_table_create, related_events_table_create]
+drop_table_queries = [events_table_drop, matches_table_drop, players_table_drop, teams_table_drop, competitions_table_drop,
+                      related_events_table_drop]
