@@ -103,7 +103,7 @@ matches_table_insert = ("""
     INSERT INTO matches (
         id,
         stadium,
-        match_date
+        match_date,
         competition,
         home_team,
         away_team,
