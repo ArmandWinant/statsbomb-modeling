@@ -53,7 +53,7 @@ players_table_create = ("""
 teams_table_create = ("""
     CREATE TABLE IF NOT EXISTS teams (
         id SMALLINT PRIMARY KEY,
-        name VARCHAR,
+        name VARCHAR NOT NULL,
         gender CHAR(1),
         country VARCHAR
     );
@@ -100,7 +100,7 @@ events_table_insert = ("""
 """)
 
 matches_table_insert = ("""
-    INSERT INTO (
+    INSERT INTO matches (
         id,
         stadium,
         match_date
@@ -116,19 +116,18 @@ matches_table_insert = ("""
 """)
 
 players_table_insert = ("""
-    INSERT INTO matches (
+    INSERT INTO players (
         id,
-        stadium,
-        match_date,
-        competition,
-        home_team,
-        away_team,
-        home_score,
-        away_score
+        name,
+        position,
+        team
     )
-    VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+    VALUES (%s, %s, %s, %s)
     ON CONFLICT(id)
-    DO NOTHING;
+    DO UPDATE
+    SET
+        position = EXCLUDED.position,
+        team = EXCLUDED.team;
 """)
 
 teams_table_insert = ("""
@@ -142,7 +141,7 @@ teams_table_insert = ("""
     ON CONFLICT (id)
     DO UPDATE
     SET
-        name = EXCLUCED.name;
+        name = EXCLUDED.name;
 """)
 
 competitions_table_insert = ("""
