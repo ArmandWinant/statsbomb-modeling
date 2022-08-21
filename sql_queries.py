@@ -69,8 +69,8 @@ competitions_table_create = ("""
 
 related_events_table_create = ("""
     CREATE TABLE IF NOT EXISTS related_events (
-        event_x SMALLINT,
-        event_y SMALLINT,
+        event_x VARCHAR,
+        event_y VARCHAR,
         PRIMARY KEY(event_x, event_y)
     );
 """)
